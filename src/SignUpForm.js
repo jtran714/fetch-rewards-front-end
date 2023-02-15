@@ -4,9 +4,25 @@ export default function SignUpForm() {
     const [name, setName] = React.useState("");
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
-    const [occupation, setOccupation] = React.useState("");
-    const [state, setState] = React.useState("");
+    const [occupation, setOccupation] = React.useState([]);
+    const [state, setState] = React.useState([]);
+    const [selectedOccupation, setSelectedOccupation] = React.useState("");
+    const [selectedState, setSelectedState] = React.useState("");
     const [submitted, setSubmitted] = React.useState(false);
+
+    React.useEffect(() => {
+        const fetchData = async () => {
+            const url = "https://frontend-take-home.fetchrewards.com/form";
+            const response = await fetch(url);
+
+            if (response.ok) {
+                const data = await response.json();
+                setOccupation(data.occupations);
+                setState(data.states);
+            }
+        };
+        fetchData();
+    }, []);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -27,8 +43,6 @@ export default function SignUpForm() {
                 setName("");
                 setEmail("");
                 setPassword("");
-                setOccupation("");
-                setState("");
                 setSubmitted(true);
             }
     };
@@ -77,40 +91,50 @@ export default function SignUpForm() {
                     placeholder="Password"
                 />
             </div>
-            <div>
-                <label htmlFor="occupation" className="form-label">
+            <div className="form-group">
+                <label htmlFor="occupation">
                     Occupation
                 </label>
-                <input
-                    required
-                    value={occupation}
-                    onChange={(event) => setOccupation(event.target.value)}
-                    type="text"
-                    className="form-control"
-                    id="occupation"
-                    placeholder="Occupation"
-                />
+                <select 
+                    className="form-control" 
+                    id="occupation" 
+                    value={selectedOccupation} 
+                    onChange={(event) => setSelectedOccupation(event.target.value)}>
+                <option value="">
+                    Select your occupation
+                </option>
+                    {occupation.map((occupation) => (
+                    <option key={occupation} value={occupation}>
+                        {occupation}
+                    </option>
+                ))}
+                </select>
             </div>
-            <div>
-                <label htmlFor="state" className="form-label">
+            <div className="form-group">
+                <label htmlFor="state">
                     State
                 </label>
-                <input
-                    required
-                    value={state}
-                    onChange={(event) => setState(event.target.value)}
-                    type="text"
-                    className="form-control"
-                    id="state"
-                    placeholder="State"
-                />
+                <select 
+                    className="form-control" 
+                    id="state" 
+                    value={selectedState} 
+                    onChange={(event) => setSelectedState(event.target.value)}>
+                <option value="">
+                    Select a state
+                </option>
+                    {state.map((state) => (
+                    <option key={state.abbreviation} value={state.name}>
+                        {state.name}
+                    </option>
+                ))}
+                </select>
             </div>
-            <button className="btn btn-primary">Create</button>
-            {submitted && (
-                <div className="success-message">
-                    Success! Thank you for signing up!!
-                </div>
-            )}
+                <button className="btn btn-primary">Create</button>
+                {submitted && (
+                    <div className="success-message">
+                        Success! Thank you for signing up!!
+                    </div>
+                )}
         </form>
     );
 };
