@@ -43,6 +43,8 @@ export default function SignUpForm() {
                 setName("");
                 setEmail("");
                 setPassword("");
+                setOccupation([]);
+                setState([]);
                 setSubmitted(true);
             }
     };
